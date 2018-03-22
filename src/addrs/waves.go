@@ -6,6 +6,7 @@ import (
 
 	"errors"
 
+	"github.com/MDLlife/teller/src/util"
 	"github.com/boltdb/bolt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/sirupsen/logrus"
