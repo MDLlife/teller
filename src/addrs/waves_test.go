@@ -35,7 +35,7 @@ func TestNewWAVESAddrsContainsInvalid(t *testing.T) {
 
 	addresses := `
 		3PEruAtC1edYhUPNoNAerP5xjdVaQMDHkPP
-        bad`
+        	bad`
 
 	expectedErr := errors.New("Invalid deposit address `bad`: Invalid address length")
 
