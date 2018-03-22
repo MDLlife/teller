@@ -43,6 +43,8 @@ func GetBindAddressBkt(coinType string) ([]byte, error) {
 		suffix = "eth"
 	case scanner.CoinTypeSKY:
 		suffix = "sky"
+	case scanner.CoinTypeWAVES:
+		suffix = "waves"
 	default:
 		return nil, scanner.ErrUnsupportedCoinType
 	}
@@ -574,7 +576,7 @@ func (s *Store) GetDepositStats() (stats *DepositStats, err error) {
 				stats.TotalETHReceived += dpi.DepositValue
 			case scanner.CoinTypeSKY:
 				stats.TotalSKYReceived += dpi.DepositValue
-			case scanner.CoinTypeWAVE:
+			case scanner.CoinTypeWAVES:
 				stats.TotalWAVEReceived += dpi.DepositValue
 			}
 			stats.TotalMDLSent += int64(dpi.MDLSent)
