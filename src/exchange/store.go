@@ -580,6 +580,7 @@ func (s *Store) GetDepositStats() (stats *DepositStats, err error) {
 				stats.TotalWAVESReceived += dpi.DepositValue
 			}
 			stats.TotalMDLSent += int64(dpi.MDLSent)
+			stats.TotalTransactions++
 
 			return nil
 		})
