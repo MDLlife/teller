@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"encoding/json"
 	"time"
 	"encoding/json"
 
@@ -14,8 +15,8 @@ import (
 	"github.com/MDLlife/teller/src/exchange"
 	"github.com/MDLlife/teller/src/util/httputil"
 	"github.com/MDLlife/teller/src/util/logger"
-	"github.com/MDLlife/teller/src/util/mathutil"
 	"github.com/shopspring/decimal"
+	"github.com/MDLlife/teller/src/util/mathutil"
 )
 
 const (
@@ -91,16 +92,16 @@ type Config struct {
 
 // Monitor monitor service struct
 type Monitor struct {
-	log logrus.FieldLogger
+	log              logrus.FieldLogger
 	AddrManager
 	EthAddrManager   AddrManager
 	SkyAddrManager   AddrManager
 	WavesAddrManager AddrManager
 	DepositStatusGetter
 	ScanAddressGetter
-	cfg  Config
-	ln   *http.Server
-	quit chan struct{}
+	cfg              Config
+	ln               *http.Server
+	quit             chan struct{}
 }
 
 // New creates monitor service
