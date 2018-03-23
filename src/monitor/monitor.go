@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"encoding/json"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -15,7 +16,6 @@ import (
 	"github.com/MDLlife/teller/src/util/logger"
 	"github.com/shopspring/decimal"
 	"github.com/MDLlife/teller/src/util/mathutil"
-	"encoding/json"
 )
 
 const (
@@ -49,13 +49,13 @@ type ScanAddressGetter interface {
 
 // WebReadyStats deposit struct for api
 type WebReadyStats struct {
-	TotalBTCReceived  string `json:"btc"`
-	TotalETHReceived  string `json:"eth"`
-	TotalSKYReceived  string `json:"sky"`
-	TotalWAVEReceived string `json:"waves"`
-	TotalUSDReceived  string `json:"usd"`
-	TotalMDLSent      string `json:"mdl"`
-	TotalTransactions int64  `json:"tx"`
+	TotalBTCReceived   string `json:"btc"`
+	TotalETHReceived   string `json:"eth"`
+	TotalSKYReceived   string `json:"sky"`
+	TotalWAVESReceived string `json:"waves"`
+	TotalUSDReceived   string `json:"usd"`
+	TotalMDLSent       string `json:"mdl"`
+	TotalTransactions  int64  `json:"tx"`
 }
 
 // ETH course
@@ -91,25 +91,27 @@ type Config struct {
 
 // Monitor monitor service struct
 type Monitor struct {
-	log            logrus.FieldLogger
+	log logrus.FieldLogger
 	AddrManager
-	EthAddrManager AddrManager
-	SkyAddrManager AddrManager
+	EthAddrManager   AddrManager
+	SkyAddrManager   AddrManager
+	WavesAddrManager AddrManager
 	DepositStatusGetter
 	ScanAddressGetter
-	cfg            Config
-	ln             *http.Server
-	quit           chan struct{}
+	cfg  Config
+	ln   *http.Server
+	quit chan struct{}
 }
 
 // New creates monitor service
-func New(log logrus.FieldLogger, cfg Config, addrManager, ethAddrManager AddrManager, skyAddrManager AddrManager, dpstget DepositStatusGetter, sag ScanAddressGetter) *Monitor {
+func New(log logrus.FieldLogger, cfg Config, addrManager, ethAddrManager AddrManager, skyAddrManager AddrManager, wavesAddrManager AddrManager, dpstget DepositStatusGetter, sag ScanAddressGetter) *Monitor {
 	return &Monitor{
 		log:                 log.WithField("prefix", "teller.monitor"),
 		cfg:                 cfg,
 		AddrManager:         addrManager,
 		EthAddrManager:      ethAddrManager,
 		SkyAddrManager:      skyAddrManager,
+		WavesAddrManager:    wavesAddrManager,
 		DepositStatusGetter: dpstget,
 		ScanAddressGetter:   sag,
 		quit:                make(chan struct{}),
@@ -350,7 +352,7 @@ func (m *Monitor) webStatsHandler() http.HandlerFunc {
 		ts.TotalBTCReceived = ts.TotalBTCReceived + m.cfg.FixBtcValue
 		ts.TotalETHReceived = ts.TotalETHReceived + m.cfg.FixEthValue
 		ts.TotalSKYReceived = ts.TotalSKYReceived + m.cfg.FixSkyValue
-		ts.TotalWAVEReceived = ts.TotalWAVEReceived + m.cfg.FixWavesValue
+		ts.TotalWAVESReceived = ts.TotalWAVESReceived + m.cfg.FixWavesValue
 		ts.TotalMDLSent = ts.TotalMDLSent + m.cfg.FixMdlValue
 		ts.TotalTransactions = ts.TotalTransactions + m.cfg.FixTxValue
 
@@ -361,7 +363,7 @@ func (m *Monitor) webStatsHandler() http.HandlerFunc {
 			mathutil.IntToBTC(ts.TotalBTCReceived).String(),
 			mathutil.IntToETH(ts.TotalETHReceived).String(),
 			mathutil.IntToSKY(ts.TotalSKYReceived).String(),
-			mathutil.IntToWAV(ts.TotalWAVEReceived).String(),
+			mathutil.IntToWAV(ts.TotalWAVESReceived).String(),
 			usd.String(),
 			mdl.String(),
 			ts.TotalTransactions,
